@@ -6,7 +6,7 @@
 /*   By: gloms <rbrendle@student.42mulhouse.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 19:01:26 by gloms             #+#    #+#             */
-/*   Updated: 2023/04/29 00:43:14 by gloms            ###   ########.fr       */
+/*   Updated: 2023/05/02 16:49:52 by gloms            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ char *read_store(int fd, char *storage)
 	while (retread > 0)
 	{
 		buf = malloc(sizeof(char) * BUFFER_SIZE + 1);
+		if (!buf)
+			return (free(storage), NULL);
 		retread = read(fd, buf, BUFFER_SIZE);
 		if (retread < 0)
 			return(free(storage), NULL);
