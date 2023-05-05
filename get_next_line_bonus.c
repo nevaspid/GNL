@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gloms <rbrendle@student.42mulhouse.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 19:01:26 by gloms             #+#    #+#             */
-/*   Updated: 2023/05/05 15:42:47 by gloms            ###   ########.fr       */
+/*   Updated: 2023/05/05 15:47:12 by gloms            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	storage_analyser(char *storage)
 {
@@ -81,29 +81,29 @@ char	*define_returned_line(char **storage)
 
 char	*get_next_line(int fd)
 {
-	static char	*storage;
+	static char	*storage[4096];
 	char		*returned_line;
 
 	if (BUFFER_SIZE < 1 || fd < 0 || read(fd, NULL, 0) < 0)
 	{
-		free(storage);
-		storage = NULL;
+		free(storage[fd]);
+		storage[fd] = NULL;
 		return (NULL);
 	}
-	storage = read_store(fd, storage);
-	if (!storage)
+	storage[fd] = read_store(fd, storage[fd]);
+	if (!storage[fd])
 		return (NULL);
-	returned_line = define_returned_line(&storage);
+	returned_line = define_returned_line(&storage[fd]);
 	if (!returned_line || (returned_line && *returned_line == '\0'))
 	{
 		free(returned_line);
-		free(storage);
-		return (storage = NULL);
+		free(storage[fd]);
+		return (storage[fd] = NULL);
 	}
-	if (storage && storage[0] == 0)
+	if (storage[fd] && storage[fd][0] == 0)
 	{
-		free(storage);
-		storage = NULL;
+		free(storage[fd]);
+		storage[fd] = NULL;
 	}
 	return (returned_line);
 }
