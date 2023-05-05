@@ -6,7 +6,7 @@
 /*   By: gloms <rbrendle@student.42mulhouse.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 19:01:19 by gloms             #+#    #+#             */
-/*   Updated: 2023/04/28 19:13:47 by gloms            ###   ########.fr       */
+/*   Updated: 2023/05/05 14:43:24 by gloms            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,9 @@
 # include <fcntl.h>
 # include <stdio.h>
 
-// # define BUFFER_SIZE
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 20
+# endif
 
 char	*get_next_line(int fd);
 int		ft_strlen(char *str);

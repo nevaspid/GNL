@@ -6,7 +6,7 @@
 /*   By: gloms <rbrendle@student.42mulhouse.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 19:01:26 by gloms             #+#    #+#             */
-/*   Updated: 2023/05/02 16:49:52 by gloms            ###   ########.fr       */
+/*   Updated: 2023/05/05 14:56:57 by gloms            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,16 @@ char *read_store(int fd, char *storage)
 			return (free(storage), NULL);
 		retread = read(fd, buf, BUFFER_SIZE);
 		if (retread < 0)
+		{
+			free(buf);
+			storage = NULL;
 			return(free(storage), NULL);
+		}
 		buf[retread] = '\0';
 		storage = ft_strjoin(storage, buf);
+		free(buf);
 		if (storage == NULL)
 			return (free(storage), NULL);
-		free(buf);
 		if (storage_analyser(storage) == 1)
 			break;
 	}
@@ -67,6 +71,11 @@ char *define_returned_line(char **storage)
 	free(*storage);
 	*storage = ft_substr(temp_storage, len_line, (len_storage - len_line));
 	free(temp_storage);
+	if (!*storage)
+	{
+		free(returned_line);
+		return (NULL);
+	}
 	return (returned_line);
 }
 
@@ -74,16 +83,27 @@ char	*get_next_line(int fd)
 {
 	static char	*storage = NULL;
 	char		*returned_line;
-	if (!fd)
+	if (BUFFER_SIZE < 1 || fd < 0 || read(fd, NULL, 0) < 0)
+	{
+		free(storage);
+		storage = NULL;
 		return (NULL);
+	}
 	storage = read_store(fd, storage);
 	if (!storage)
 		return (NULL);
 	returned_line =	define_returned_line(&storage);
-	if (returned_line && *returned_line == '\0')
+	if (!returned_line || (returned_line && *returned_line == '\0'))
 	{
 		free(returned_line);
+		free(storage);
+		storage = NULL;
 		return (NULL);
+	}
+	if (storage && storage[0] == 0)
+	{
+		free(storage);
+		storage = NULL;
 	}
 	return (returned_line);
 }
